@@ -18,8 +18,10 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 
 }
 
+// Below one is like a template for the boilerplate for proper json response
 func respondWithJSON(w http.ResponseWriter, code int , payload interface{}) {
 	data, err := json.Marshal(payload)
+	
 	if err != nil {
 		log.Printf("Failed to Marshal the JSON %v",payload)
 		w.WriteHeader(http.StatusInternalServerError) // here we mention the status code
