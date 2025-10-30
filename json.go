@@ -15,7 +15,6 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 		Error string `json:"error"`
 	}
 	respondWithJSON(w, code, errorResponse{Error: message})
-
 }
 
 // Below one is like a template for the boilerplate for proper json response
