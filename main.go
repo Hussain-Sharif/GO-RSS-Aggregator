@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
+	"github.com/lib/pg"
 )
 
 
@@ -20,6 +21,17 @@ func main(){
 	if(portString==""){ // if don't find the PORT
 		log.Fatal("Port is not found") // This will stop the program to execute
 	}
+	dbUrl:=os.Getenv("DB_URL") 
+	if(dbUrl==""){ 
+		log.Fatal("DB Url is missing from env")
+	}
+
+	conn,err:=sql.Open("postgres",dbUrl)
+
+	if(err!=nil){
+		log.Fatal("error to connect with DB",err)
+	}
+
 
 	// router creation
 	router:= chi.NewRouter() // Creating a new router
