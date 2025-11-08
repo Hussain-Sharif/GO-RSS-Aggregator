@@ -7,19 +7,20 @@ import (
 	"github.com/google/uuid"
 )
 
-
-type User struct{
+type User struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Name      string `json:"name"`
+	Name      string    `json:"name"`
+	ApiKey    string    `json:"api_key"`
 }
 
-func databaseUserToUser(dbUser database.User) User{
+func databaseUserToUser(dbUser database.User) User {
 	return User{
-		ID:dbUser.ID,
+		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
-		Name: dbUser.Name,
+		Name:      dbUser.Name,
+		ApiKey:    dbUser.ApiKey,
 	}
 }
