@@ -52,3 +52,22 @@ func databaseFeedsToFeeds(allDBFeeds []database.Feed) []Feed{
 	}
 	return feeds
 }
+
+
+type Feed_Follows struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UserID  uuid.UUID 	`json:"user_id"`
+	FeedID uuid.UUID `json:"feed_id"`
+}
+
+func databaseFeedFollowsToFeedFollows(allFeedFollows database.FeedFollow)Feed_Follows {
+	return Feed_Follows{
+		ID: allFeedFollows.ID,
+		CreatedAt: allFeedFollows.CreatedAt,
+		UpdatedAt: allFeedFollows.UpdatedAt,
+		UserID: allFeedFollows.UserID,
+		FeedID: allFeedFollows.FeedID,
+	}
+}
