@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Hussain-Sharif/GO-RSS-Aggregator/internal/database"
 	"github.com/go-chi/chi"
@@ -19,7 +20,6 @@ type apiConfig struct {
 }
 
 func main() {
-	fmt.Println("Hello World")
 
 	// env setup
 	godotenv.Load(".env")           // This will load the .env file
@@ -38,9 +38,12 @@ func main() {
 		log.Fatal("error to connect with DB", err)
 	}
 
+	dbConnection:=database.New(conn)
 	apiCfg := apiConfig{ // this helps to have handlers to use the DB
-		DB: database.New(conn),
+		DB: dbConnection,
 	}
+
+	startScrapping(dbConnection,10,time.Minute)
 
 	// router creation
 	router := chi.NewRouter() // Creating a new router
@@ -61,6 +64,8 @@ func main() {
 	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
 	v1Router.Get("/allfeeds", apiCfg.handlerGetAllFeeds)
 	v1Router.Post("/feed-follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
+	v1Router.Get("/feed-follows",apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
+	v1Router.Delete("/feed-follows/{feedFollowID}",apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
 
 	router.Mount("/v1", v1Router)
 
