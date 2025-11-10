@@ -42,3 +42,18 @@ func (apiCfg *apiConfig) handlerCreaeteUser(w http.ResponseWriter, r *http.Reque
 func (apiConfig *apiConfig) handlerGetUser(w http.ResponseWriter,r *http.Request, user database.User){
 	respondWithJSON(w,200,databaseUserToUser(user))
 }
+
+
+func (cfg *apiConfig) handlerGetPostsForUser(w http.ResponseWriter,r *http.Request, user database.User){
+	posts,err:=cfg.DB.GetPostsForUser(r.Context(),database.GetPostsForUserParams{
+		UserID:user.ID,
+		Limit: 10,
+	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Couldn't able to get all posts of user: %v", err))
+		return
+	}
+
+	respondWithJSON(w,200,databasePostsTOPosts(posts))
+
+}
