@@ -27,7 +27,7 @@ type RSSItem struct{
 
 func urlToFeed(url string) (RSSFeed,error) {
 	httpClient:=http.Client{
-		Timeout: 10*time.Second,
+		Timeout: 10*time.Second, // don't wait forever if site is slow, hardly waits 10sec then move on.
 	}
 
 	resp,err:=httpClient.Get(url)

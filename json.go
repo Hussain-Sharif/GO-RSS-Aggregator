@@ -32,3 +32,9 @@ func respondWithJSON(w http.ResponseWriter, code int , payload interface{}) { //
 	w.WriteHeader(code)
 	w.Write(data)
 }
+
+// Decodes JSON from request body
+func respondWithBody(_ http.ResponseWriter, r *http.Request, payload interface{}) error {
+    decoder := json.NewDecoder(r.Body)
+    return decoder.Decode(payload)
+}

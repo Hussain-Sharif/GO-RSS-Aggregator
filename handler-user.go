@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -14,11 +13,10 @@ func (apiCfg *apiConfig) handlerCreaeteUser(w http.ResponseWriter, r *http.Reque
 	type parameters struct {
 		Name string `json:"name"`
 	}
-	decoder := json.NewDecoder(r.Body)
 
 	params := parameters{}
 
-	err := decoder.Decode(&params)
+	err:=respondWithBody(w,r,&params)
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
 		return

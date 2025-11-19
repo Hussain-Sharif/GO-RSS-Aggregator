@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -17,10 +16,10 @@ func (cfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Req
 		FeedID uuid.UUID `json:"feed_id"` 
 	}
 
-	decoder := json.NewDecoder(r.Body)
 	params:= parameters{}
 
-	err:=decoder.Decode(&params)
+	// err:=decoder.Decode(&params)
+	err:=respondWithBody(w,r,&params)
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
 		return
