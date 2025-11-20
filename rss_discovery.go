@@ -36,15 +36,13 @@ func discoverFeeds(pageURL string) (FeedDiscoveryResult, error) {
         "/rss.xml",
         "/index.xml",
         "/atom.xml",
-        "/feed/",
-        "/rss/",
     }
     
     baseURL := strings.TrimSuffix(pageURL, "/")
     
     for _, pattern := range commonPatterns {
         testURL := baseURL + pattern
-        if isValidFeed(testURL) {
+        if isValidFeed(testURL) && isNewFeedUrl(result.FeedURLs,testURL) {
             feedType := getFeedType(testURL)
             result.FeedURLs = append(result.FeedURLs, FeedURL{
                 URL:   testURL,
@@ -67,6 +65,15 @@ func discoverFeeds(pageURL string) (FeedDiscoveryResult, error) {
     }
     
     return result, nil
+}
+
+func isNewFeedUrl(currentFetchedUrls []FeedURL,currentTestUrl string) (bool){
+    for _,eachUrl:=range currentFetchedUrls{
+        if(eachUrl.URL==currentTestUrl){
+            return false
+        }
+    }
+    return true
 }
 
 // Checks if URL is a valid RSS/Atom feed
@@ -126,6 +133,7 @@ func parseHTMLForFeeds(pageURL string) ([]FeedURL, error) {
     
     var feeds []FeedURL
     var f func(*html.Node)
+
     f = func(n *html.Node) {
         if n.Type == html.ElementNode && n.Data == "link" {
             var rel, feedType, href, title string
@@ -157,11 +165,13 @@ func parseHTMLForFeeds(pageURL string) ([]FeedURL, error) {
                     feedFormat = "atom"
                 }
                 
-                feeds = append(feeds, FeedURL{
-                    URL:   href,
-                    Type:  feedFormat,
-                    Title: title,
-                })
+                if(isNewFeedUrl(feeds,href)){
+                    feeds = append(feeds, FeedURL{
+                        URL:   href,
+                        Type:  feedFormat,
+                        Title: title,
+                    })
+                }
             }
         }
         
