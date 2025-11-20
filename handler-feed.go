@@ -25,24 +25,27 @@ func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+    var finalUrl string=params.Url
+
 	// VALIDATE IT'S A REAL FEED!
     if !isValidFeed(params.Url) {
         // Try auto-discovery
         result, err := discoverFeeds(params.Url)
         if err != nil || len(result.FeedURLs) == 0 {
             respondWithError(w, 400, fmt.Sprintf(
-                "Invalid RSS feed URL. Try /v1/discover-feed to find valid feeds from this URL: %s", 
+                "Invalid RSS feed URL: %s, Unable to detect the feed path! via URL", 
                 params.Url,
             ))
             return
         }
         
         // Suggest the first discovered feed
-        respondWithError(w, 400, fmt.Sprintf(
-            "Not a valid feed URL. Did you mean: %s? Use /v1/discover-feed first.",
-            result.FeedURLs[0].URL,
-        ))
-        return
+        // respondWithError(w, 400, fmt.Sprintf(
+        //     "Not a valid feed URL. Did you mean: %s? Use /v1/discover-feed first.",
+        //     result.FeedURLs[0].URL,
+        // ))
+        // return
+        finalUrl=result.FeedURLs[0].URL
     }
 
 	feed,err:=cfg.DB.CreateFeed(r.Context(),database.CreateFeedParams{
@@ -50,9 +53,14 @@ func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Name:      params.Name,
-		Url: params.Url,
+		Url: finalUrl,
 		UserID: user.ID,
 	})
+    if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Error while creating the feed %v", err))
+		return
+	}
+
 
 	respondWithJSON(w,200,databaseFeedToFeed(feed))
 
