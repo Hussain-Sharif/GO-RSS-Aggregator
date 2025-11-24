@@ -32,6 +32,7 @@ func discoverFeeds(pageURL string) (FeedDiscoveryResult, error) {
 	// 1. Try common RSS URL patterns first
 	commonPatterns := []string{
 		"/feed",
+		"/feeds",
 		"/rss",
 		"/feed.xml",
 		"/rss.xml",
